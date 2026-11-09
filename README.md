@@ -11,79 +11,57 @@ Backend para la tienda online de música ("Sonido Vivo"), desarrollado para la *
 
 ---
 
-## 🗺️ Hoja de Ruta de Implementación (Orden Secuencial de Tareas)
-
-El desarrollo está organizado en **5 Fases secuenciales** con 14 pasos numerados para garantizar que el proyecto se construya de forma ordenada y sin bloqueos de dependencias:
-
-```
-[Fase 1: Fundaciones y Modelos Base]
-  ├── Paso 01: Seguridad Spring Security & JWT (Gonzalo)
-  ├── Paso 02: Modelo de Usuarios y Roles (Itsa)
-  └── Paso 03: Modelo de Productos y Catálogo (Gonzalo)
-          │
-[Fase 2: Lógica de Negocio y Transacciones]
-  ├── Paso 04: Control de Inventario y Stock Crítico (Itsa)
-  ├── Paso 05: Pedidos, Órdenes y Checkout Transaccional (Damián)
-  ├── Paso 06: Flujo de Estados de Pedidos y KPIs (Damián)
-  └── Paso 07: Auditoría e Historial de Usuarios (Itsa)
-          │
-[Fase 3: Pruebas Backend y Swagger Global]
-  ├── Paso 08: Pruebas Unitarias/Integración Auth y Productos (Gonzalo)
-  └── Paso 09: Pruebas Integración Pedidos y Swagger OpenAPI (Damián)
-          │
-[Fase 4: Integración Frontend ↔ Backend (React)]
-  ├── Paso 10: Integración Frontend Auth, Sesión F5 y Catálogo (Gonzalo)
-  ├── Paso 11: Integración Frontend Usuarios, Auditoría y Bodega (Itsa)
-  └── Paso 12: Integración Frontend Checkout, Pedidos y Métricas (Damián)
-          │
-[Fase 5: Documentación y Defensa Individual]
-  ├── Paso 13: Manual de Usuario (Anexo 4), ERS y Doc de Integración (Equipo)
-  └── Paso 14: Diapositivas, Demo en Vivo y Defensa Técnica 60% (Equipo)
-```
-
----
-
-### 📋 Detalle de Tareas Paso a Paso (Issues en GitHub)
-
-| Paso | Fase | Issue | Responsable | Rama | Tarea | Dependencia previa |
-|---|---|---|---|---|---|---|
-| **Paso 01** | Fase 1 | [#1](https://github.com/Gonz423/Tienda_Musica_Backend/issues/1) | **Gonzalo** | `gonzalo` | Configuración Spring Security, utilidades JWT y endpoints Auth | *Inicio* |
-| **Paso 02** | Fase 1 | [#4](https://github.com/Gonz423/Tienda_Musica_Backend/issues/4) | **Itsa** | `itsa` | Entidad `Usuario`, roles (`ADMIN`, `VENDEDOR`, `CLIENTE`) y CRUD | Paso 01 |
-| **Paso 03** | Fase 1 | [#2](https://github.com/Gonz423/Tienda_Musica_Backend/issues/2) | **Gonzalo** | `gonzalo` | Entidad `Producto`, catálogo de instrumentos y CRUD REST | Paso 01 |
-| **Paso 04** | Fase 2 | [#5](https://github.com/Gonz423/Tienda_Musica_Backend/issues/5) | **Itsa** | `itsa` | Lógica de inventario, ajuste rápido y alerta stock crítico (<= 3) | Paso 03 |
-| **Paso 05** | Fase 2 | [#7](https://github.com/Gonz423/Tienda_Musica_Backend/issues/7) | **Damián** | `damian` | Entidades `Pedido`/`DetallePedido`, checkout y descuento transaccional | Paso 02, 03 |
-| **Paso 06** | Fase 2 | [#8](https://github.com/Gonz423/Tienda_Musica_Backend/issues/8) | **Damián** | `damian` | Máquina de estados (`Pendiente` ➔ `Preparación` ➔ `Despachado`) y KPIs | Paso 05 |
-| **Paso 07** | Fase 2 | [#6](https://github.com/Gonz423/Tienda_Musica_Backend/issues/6) | **Itsa** | `itsa` | Entidad `HistorialUsuario`, bitácora de auditoría y notas | Paso 02 |
-| **Paso 08** | Fase 3 | [#3](https://github.com/Gonz423/Tienda_Musica_Backend/issues/3) | **Gonzalo** | `gonzalo` | Pruebas unitarias Mockito y de integración MockMvc (Auth y Productos) | Paso 01, 03 |
-| **Paso 09** | Fase 3 | [#9](https://github.com/Gonz423/Tienda_Musica_Backend/issues/9) | **Damián** | `damian` | Pruebas de integración de Pedidos y Swagger OpenAPI interactivo | Paso 05, 06 |
-| **Paso 10** | Fase 4 | [#10](https://github.com/Gonz423/Tienda_Musica_Backend/issues/10) | **Gonzalo** | `gonzalo` | Integración React: Interceptor JWT, persistencia sesión F5 y Catálogo | Paso 01, 08 |
-| **Paso 11** | Fase 4 | [#11](https://github.com/Gonz423/Tienda_Musica_Backend/issues/11) | **Itsa** | `itsa` | Integración React: Directorio usuarios, auditoría y botones bodega | Paso 02, 04, 07 |
-| **Paso 12** | Fase 4 | [#12](https://github.com/Gonz423/Tienda_Musica_Backend/issues/12) | **Damián** | `damian` | Integración React: Checkout carrito, tabla pedidos y tarjetas KPIs | Paso 05, 06 |
-| **Paso 13** | Fase 5 | [#13](https://github.com/Gonz423/Tienda_Musica_Backend/issues/13) | **Equipo** | `main` | Manual de Usuario (capturas 1px Anexo 4), ERS y Doc de Integración | Paso 10, 11, 12 |
-| **Paso 14** | Fase 5 | [#14](https://github.com/Gonz423/Tienda_Musica_Backend/issues/14) | **Equipo** | `main` | Preparación de Diapositivas, Demo en Vivo y Defensa Individual (60%) | Todos |
-
----
-
 ## 🛠️ Stack Tecnológico
-- **Java 17**
-- **Spring Boot 4.x / 3.x**
-- **Spring Data JPA** (Hibernate)
-- **PostgreSQL** (Base de Datos Relacional)
-- **Spring Security & JWT** (Autenticación basada en tokens y control de accesos)
-- **Springdoc OpenAPI / Swagger** (Documentación interactiva de endpoints)
-- **Maven** (Gestión de dependencias)
+- **Java 17 / 21** & **Spring Boot 4 / Spring 6**
+- **Spring Security 6** con autenticación stateless y tokens **JWT (JJWT 0.12.6)**
+- **Spring Data JPA & Hibernate** con base de datos **MySQL local** (`tienda_musica_db`)
+- **Swagger / OpenAPI 3** (`springdoc-openapi-starter-webmvc-ui`)
+- **Frontend conectado:** React + Vite (`http://localhost:5173`)
 
 ---
 
-## 🔐 Roles y Permisos del Sistema
-- **ADMIN / JEFE DE TIENDA**: Acceso total al sistema (gestión de productos, auditoría de usuarios, reportes y KPIs).
-- **VENDEDOR / TRABAJADOR**: Gestión operativa de pedidos (preparación y despacho) y control de stock en bodega.
-- **CLIENTE**: Consulta del catálogo público de productos, compras y órdenes personales.
+## 🗺️ Hoja de Ruta de Implementación (20 Pasos Atómicos)
+
+El proyecto se encuentra dividido en **20 tareas específicas y atómicas**, asegurando que cada miembro implemente tanto endpoints de backend como la integración de pantallas en el frontend:
+
+| Paso | Responsable | Rama | Issue | Tarea / Endpoint / Conexión |
+|---|---|---|---|---|
+| **01** | **Gonzalo** | `gonzalo` | [#15](https://github.com/Gonz423/Tienda_Musica_Backend/issues/15) | Configuración de Spring Security, CORS y `JwtService` |
+| **02** | **Gonzalo** | `gonzalo` | [#16](https://github.com/Gonz423/Tienda_Musica_Backend/issues/16) | Endpoints de Autenticación: `POST /api/auth/login` y `POST /api/auth/register` |
+| **03** | **Gonzalo** | `gonzalo` | [#34](https://github.com/Gonz423/Tienda_Musica_Backend/issues/34) | Conexión Frontend: Login de Usuario, Almacenamiento JWT y Persistencia F5 |
+| **04** | **Gonzalo** | `gonzalo` | [#17](https://github.com/Gonz423/Tienda_Musica_Backend/issues/17) | Entidad `Producto` JPA y Endpoint `GET /api/productos` con Filtros de Búsqueda |
+| **05** | **Gonzalo** | `gonzalo` | [#18](https://github.com/Gonz423/Tienda_Musica_Backend/issues/18) | Conexión Frontend: Catálogo (`Catalogo.jsx`) y Detalle consumiendo API REST |
+| **06** | **Gonzalo** | `gonzalo` | [#19](https://github.com/Gonz423/Tienda_Musica_Backend/issues/19) | Endpoints Administrativos CRUD: `POST`, `PUT`, `DELETE /api/productos` (Rol ADMIN) |
+| **07** | **Gonzalo** | `gonzalo` | [#20](https://github.com/Gonz423/Tienda_Musica_Backend/issues/20) | Conexión Frontend: Gestión de Productos de Jefe (`ProductosJefe.jsx`) |
+| **08** | **Itsa** | `itsa` | [#21](https://github.com/Gonz423/Tienda_Musica_Backend/issues/21) | Entidad `Usuario` JPA y Endpoints CRUD `/api/usuarios` con Hash BCrypt (Rol ADMIN) |
+| **09** | **Itsa** | `itsa` | [#22](https://github.com/Gonz423/Tienda_Musica_Backend/issues/22) | Conexión Frontend: Administración de Usuarios y Roles (`UsuariosJefe.jsx`) |
+| **10** | **Itsa** | `itsa` | [#23](https://github.com/Gonz423/Tienda_Musica_Backend/issues/23) | Endpoint `PATCH /api/productos/{id}/stock` y Lógica de Stock Crítico |
+| **11** | **Itsa** | `itsa` | [#24](https://github.com/Gonz423/Tienda_Musica_Backend/issues/24) | Conexión Frontend: Control de Stock en Bodega (`StockEmpleado.jsx`) |
+| **12** | **Itsa** | `itsa` | [#25](https://github.com/Gonz423/Tienda_Musica_Backend/issues/25) | Módulo de Auditoría de Acciones y Notas Administrativas de Usuario |
+| **13** | **Damián** | `damian` | [#26](https://github.com/Gonz423/Tienda_Musica_Backend/issues/26) | Entidades `Pedido`/`DetallePedido` y Endpoint Transaccional `POST /api/pedidos` |
+| **14** | **Damián** | `damian` | [#27](https://github.com/Gonz423/Tienda_Musica_Backend/issues/27) | Conexión Frontend: Checkout del Carrito de Compras hacia la API de Pedidos |
+| **15** | **Damián** | `damian` | [#28](https://github.com/Gonz423/Tienda_Musica_Backend/issues/28) | Endpoints `GET /api/pedidos` y `PATCH /api/pedidos/{id}/estado` (Operación Empleado) |
+| **16** | **Damián** | `damian` | [#29](https://github.com/Gonz423/Tienda_Musica_Backend/issues/29) | Conexión Frontend: Panel de Pedidos de Empleado (`PedidosEmpleado.jsx`) |
+| **17** | **Damián** | `damian` | [#30](https://github.com/Gonz423/Tienda_Musica_Backend/issues/30) | Endpoint `GET /api/metricas/kpis` y Conexión Frontend en `MetricasJefe.jsx` |
+| **18** | **Equipo** | `main` | [#31](https://github.com/Gonz423/Tienda_Musica_Backend/issues/31) | Configuración Global de Swagger OpenAPI con Soporte Bearer JWT (`OpenApiConfig`) |
+| **19** | **Equipo** | `main` | [#32](https://github.com/Gonz423/Tienda_Musica_Backend/issues/32) | Suite de Pruebas Unitarias e Integración Backend con MockMvc |
+| **20** | **Equipo** | `main` | [#33](https://github.com/Gonz423/Tienda_Musica_Backend/issues/33) | Documentación Oficial: Manual de Usuario (Anexo 4 con bordes 1px), ERS y APIs |
 
 ---
 
-## 🌿 Estrategia de Ramas
-- `main`: Rama principal de producción integrada.
-- `gonzalo`: Rama de trabajo para Gonzalo.
-- `itsa`: Rama de trabajo para Itsa.
-- `damian`: Rama de trabajo para Damián.
+## 🚀 Puesta en Marcha Local
+
+1. Asegúrate de tener **MySQL** corriendo en el puerto `3306`.
+2. Clona el repositorio:
+   ```bash
+   git clone https://github.com/Gonz423/Tienda_Musica_Backend.git
+   cd Tienda_Musica_Backend
+   ```
+3. Ejecuta la aplicación:
+   ```bash
+   ./mvnw spring-boot:run
+   ```
+4. Accede a la documentación interactiva Swagger:
+   ```
+   http://localhost:8080/swagger-ui.html
+   ```
