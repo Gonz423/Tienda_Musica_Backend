@@ -11,3 +11,4 @@ public record LoginRequest(
         @NotBlank(message = "La contraseña es obligatoria")
         String password
 ) {}
+

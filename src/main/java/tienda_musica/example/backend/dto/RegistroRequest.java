@@ -20,3 +20,4 @@ public record RegistroRequest(
         String telefono,
         String direccion
 ) {}
+

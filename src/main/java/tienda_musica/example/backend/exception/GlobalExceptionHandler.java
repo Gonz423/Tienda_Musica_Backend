@@ -35,3 +35,4 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", mensaje));
     }
 }
+

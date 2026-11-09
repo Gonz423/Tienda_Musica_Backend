@@ -63,3 +63,4 @@ public class AuthService {
         return new LoginResponse(token, guardado.getCorreo(), guardado.getNombre(), guardado.getRol());
     }
 }
+
