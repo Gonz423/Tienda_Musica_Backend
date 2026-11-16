@@ -18,6 +18,12 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", e.getMessage() != null ? e.getMessage() : "Credenciales inválidas"));
     }
 
+    @ExceptionHandler(RecursoNoEncontradoException.class)
+    public ResponseEntity<Map<String, String>> manejarRecursoNoEncontrado(RecursoNoEncontradoException e) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Map.of("error", e.getMessage()));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, String>> manejarIllegalArgument(IllegalArgumentException e) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
@@ -35,4 +41,3 @@ public class GlobalExceptionHandler {
                 .body(Map.of("error", mensaje));
     }
 }
-
