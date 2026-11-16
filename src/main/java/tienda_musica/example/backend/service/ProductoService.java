@@ -34,4 +34,33 @@ public class ProductoService {
         return productoRepository.findByCodigo(codigo)
                 .orElseThrow(() -> new RecursoNoEncontradoException("Producto no encontrado con código: " + codigo));
     }
+
+    public Producto crear(Producto producto) {
+        if (productoRepository.existsByCodigo(producto.getCodigo())) {
+            throw new IllegalArgumentException("Ya existe un producto con el código: " + producto.getCodigo());
+        }
+        return productoRepository.save(producto);
+    }
+
+    public Producto actualizar(Long id, Producto datos) {
+        Producto existente = buscarPorId(id);
+        if (!existente.getCodigo().equals(datos.getCodigo()) && productoRepository.existsByCodigo(datos.getCodigo())) {
+            throw new IllegalArgumentException("Ya existe un producto con el código: " + datos.getCodigo());
+        }
+        existente.setCodigo(datos.getCodigo());
+        existente.setNombre(datos.getNombre());
+        existente.setMarca(datos.getMarca());
+        existente.setModelo(datos.getModelo());
+        existente.setCategoria(datos.getCategoria());
+        existente.setPrecio(datos.getPrecio());
+        existente.setStock(datos.getStock());
+        existente.setDescripcion(datos.getDescripcion());
+        existente.setImagenUrl(datos.getImagenUrl());
+        return productoRepository.save(existente);
+    }
+
+    public void eliminar(Long id) {
+        buscarPorId(id); // lanza 404 si no existe
+        productoRepository.deleteById(id);
+    }
 }

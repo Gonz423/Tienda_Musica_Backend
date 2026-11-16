@@ -60,11 +60,9 @@ public class SecurityConfig {
                         .requestMatchers("/api/pedidos/**").authenticated()
 
                         // Cualquier otra petición debe estar autenticada
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .exceptionHandling(e -> e.authenticationEntryPoint(
-                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)
-                ))
+                        new HttpStatusEntryPoint(HttpStatus.UNAUTHORIZED)))
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
@@ -75,8 +73,7 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://127.0.0.1:5173",
-                "http://localhost:3000"
-        ));
+                "http://localhost:3000"));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         config.setAllowedHeaders(List.of("Authorization", "Content-Type", "Accept", "Origin", "X-Requested-With"));
         config.setExposedHeaders(List.of("Authorization"));
