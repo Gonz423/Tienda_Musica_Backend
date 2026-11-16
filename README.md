@@ -21,9 +21,17 @@ Tienda_Musica_Backend/
 ├── auth-service/        ← Puerto 8081 · DB: tienda_musica_auth       (Gonzalo ✅)
 ├── usuario-service/     ← Puerto 8082 · DB: tienda_musica_usuarios    (Itsa 🔧)
 ├── producto-service/    ← Puerto 8083 · DB: tienda_musica_productos   (Gonzalo ✅)
-├── pedido-service/      ← Puerto 8084 · DB: tienda_musica_pedidos     (Damián 🔧)
-└── metrica-service/     ← Puerto 8085 · DB: tienda_musica_metricas    (Damián 🔧)
+├── pedido-service/      ← Puerto 8084 · DB: tienda_musica_pedidos     (Damián ✅)
+└── metrica-service/     ← Puerto 8085 · DB: tienda_musica_metricas    (Damián ✅)
 ```
+
+---
+
+## 🚀 Ejecución de Microservicios
+
+Para iniciar todos los microservicios y el Frontend simultáneamente en ventanas independientes:
+- **Doble clic en:** `iniciar_servicios.bat`
+- **O por PowerShell:** `.\iniciar_servicios.ps1`
 
 ---
 
