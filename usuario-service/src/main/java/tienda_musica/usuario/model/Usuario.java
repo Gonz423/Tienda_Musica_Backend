@@ -1,5 +1,6 @@
 package tienda_musica.usuario.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -31,11 +32,12 @@ public class Usuario {
 
     @NotBlank(message = "La contraseña es obligatoria")
     @Column(nullable = false)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
     @NotBlank(message = "El rol es obligatorio")
     @Column(nullable = false)
-    private String rol;
+    private String rol; // ADMIN, VENDEDOR, CLIENTE
 
     private String rut;
     private String telefono;

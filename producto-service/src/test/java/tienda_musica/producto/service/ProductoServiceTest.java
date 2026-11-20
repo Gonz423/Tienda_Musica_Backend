@@ -1,6 +1,7 @@
 package tienda_musica.producto.service;
 
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -38,6 +39,7 @@ class ProductoServiceTest {
     }
 
     @Test
+    @DisplayName("Listar productos retorna lista completa")
     void listar_retornaTodosLosProductos() {
         when(productoRepository.findAll()).thenReturn(List.of(productoPrueba));
 
@@ -49,6 +51,7 @@ class ProductoServiceTest {
     }
 
     @Test
+    @DisplayName("Buscar producto por ID existente retorna producto")
     void buscarPorId_existente_retornaProducto() {
         when(productoRepository.findById(1L)).thenReturn(Optional.of(productoPrueba));
 
@@ -59,6 +62,7 @@ class ProductoServiceTest {
     }
 
     @Test
+    @DisplayName("Buscar producto por ID no existente lanza excepción")
     void buscarPorId_noExistente_lanzaExcepcion() {
         when(productoRepository.findById(999L)).thenReturn(Optional.empty());
 
@@ -66,6 +70,7 @@ class ProductoServiceTest {
     }
 
     @Test
+    @DisplayName("Crear producto con código válido guarda y retorna")
     void crear_productoValido_guardaYRetorna() {
         when(productoRepository.existsByCodigo("TEST01")).thenReturn(false);
         when(productoRepository.save(any(Producto.class))).thenReturn(productoPrueba);
@@ -78,6 +83,7 @@ class ProductoServiceTest {
     }
 
     @Test
+    @DisplayName("Crear producto con código duplicado lanza excepción")
     void crear_codigoDuplicado_lanzaExcepcion() {
         when(productoRepository.existsByCodigo("TEST01")).thenReturn(true);
 
@@ -90,6 +96,7 @@ class ProductoServiceTest {
     }
 
     @Test
+    @DisplayName("Actualizar producto existente actualiza datos")
     void actualizar_productoExistente_actualizaDatos() {
         when(productoRepository.findById(1L)).thenReturn(Optional.of(productoPrueba));
         when(productoRepository.save(any(Producto.class))).thenAnswer(invocation -> invocation.getArgument(0));
@@ -107,11 +114,81 @@ class ProductoServiceTest {
     }
 
     @Test
+    @DisplayName("Eliminar producto existente elimina correctamente")
     void eliminar_productoExistente_eliminaCorrectamente() {
         when(productoRepository.findById(1L)).thenReturn(Optional.of(productoPrueba));
         doNothing().when(productoRepository).deleteById(1L);
 
         assertDoesNotThrow(() -> productoService.eliminar(1L));
         verify(productoRepository).deleteById(1L);
+    }
+
+    @Test
+    @DisplayName("Ajustar stock incrementando unidades actualiza correctamente")
+    void ajustarStock_incrementarStock_actualizaCorrectamente() {
+        when(productoRepository.findById(1L)).thenReturn(Optional.of(productoPrueba));
+        when(productoRepository.save(any(Producto.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Producto resultado = productoService.ajustarStock(1L, 5);
+
+        assertNotNull(resultado);
+        assertEquals(15, resultado.getStock()); // 10 + 5 = 15
+        verify(productoRepository).save(productoPrueba);
+    }
+
+    @Test
+    @DisplayName("Ajustar stock decrementando unidades actualiza correctamente")
+    void ajustarStock_decrementarStock_actualizaCorrectamente() {
+        when(productoRepository.findById(1L)).thenReturn(Optional.of(productoPrueba));
+        when(productoRepository.save(any(Producto.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        Producto resultado = productoService.ajustarStock(1L, -4);
+
+        assertNotNull(resultado);
+        assertEquals(6, resultado.getStock()); // 10 - 4 = 6
+        verify(productoRepository).save(productoPrueba);
+    }
+
+    @Test
+    @DisplayName("Ajustar stock con resultado negativo lanza IllegalArgumentException")
+    void ajustarStock_stockNegativo_lanzaIllegalArgumentException() {
+        when(productoRepository.findById(1L)).thenReturn(Optional.of(productoPrueba));
+
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            productoService.ajustarStock(1L, -15); // 10 - 15 = -5
+        });
+
+        assertTrue(ex.getMessage().contains("No se permite stock negativo"));
+        verify(productoRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Ajustar stock con delta cero lanza IllegalArgumentException")
+    void ajustarStock_deltaCero_lanzaIllegalArgumentException() {
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> {
+            productoService.ajustarStock(1L, 0);
+        });
+
+        assertTrue(ex.getMessage().contains("no puede ser 0"));
+    }
+
+    @Test
+    @DisplayName("Listar stock crítico retorna solo productos con stock <= 3")
+    void listarStockCritico_retornaSoloProductosConStockMenorOIgualA3() {
+        Producto critico = new Producto(
+                "CRIT01", "Baterías", "Batería Test", "Marca B", "Modelo B",
+                2, 450000, "Stock bajo", "https://ejemplo.com/bateria.jpg"
+        );
+        critico.setId(2L);
+
+        when(productoRepository.findByStockLessThanEqualOrderByStockAsc(3)).thenReturn(List.of(critico));
+
+        List<Producto> criticos = productoService.listarStockCritico();
+
+        assertEquals(1, criticos.size());
+        assertEquals("CRIT01", criticos.get(0).getCodigo());
+        assertTrue(criticos.get(0).getStock() <= 3);
+        assertTrue(criticos.get(0).isStockCritico());
+        verify(productoRepository).findByStockLessThanEqualOrderByStockAsc(3);
     }
 }

@@ -63,4 +63,26 @@ public class ProductoService {
         buscarPorId(id);
         productoRepository.deleteById(id);
     }
+
+    public static final int UMBRAL_STOCK_CRITICO = 3;
+
+    public Producto ajustarStock(Long id, int delta) {
+        if (delta == 0) {
+            throw new IllegalArgumentException("El ajuste de stock no puede ser 0");
+        }
+        Producto producto = buscarPorId(id);
+        int stockActual = producto.getStock() != null ? producto.getStock() : 0;
+        int nuevoStock = stockActual + delta;
+
+        if (nuevoStock < 0) {
+            throw new IllegalArgumentException("No se permite stock negativo. Stock actual: " + stockActual + ", ajuste solicitado: " + delta);
+        }
+
+        producto.setStock(nuevoStock);
+        return productoRepository.save(producto);
+    }
+
+    public List<Producto> listarStockCritico() {
+        return productoRepository.findByStockLessThanEqualOrderByStockAsc(UMBRAL_STOCK_CRITICO);
+    }
 }

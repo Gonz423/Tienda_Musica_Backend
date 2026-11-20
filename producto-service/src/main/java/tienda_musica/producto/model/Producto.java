@@ -56,6 +56,11 @@ public class Producto {
 
     private String imagenUrl;
 
+    @Transient
+    public boolean isStockCritico() {
+        return stock != null && stock <= 3;
+    }
+
     public Producto(String codigo, String categoria, String nombre, String marca, String modelo, Integer stock, Integer precio, String descripcion, String imagenUrl) {
         this.codigo = codigo;
         this.categoria = categoria;

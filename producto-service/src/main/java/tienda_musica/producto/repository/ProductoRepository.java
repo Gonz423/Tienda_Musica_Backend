@@ -19,4 +19,6 @@ public interface ProductoRepository extends JpaRepository<Producto, Long> {
     List<Producto> findByNombreContainingIgnoreCaseOrMarcaContainingIgnoreCaseOrModeloContainingIgnoreCase(
             String nombre, String marca, String modelo
     );
+
+    List<Producto> findByStockLessThanEqualOrderByStockAsc(Integer limite);
 }

@@ -33,11 +33,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html", "/v3/api-docs/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/productos/stock-critico").hasAnyRole("ADMIN", "VENDEDOR")
+                        .requestMatchers(HttpMethod.PATCH, "/api/productos/*/stock").hasAnyRole("ADMIN", "VENDEDOR")
                         .requestMatchers(HttpMethod.GET, "/api/productos/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/productos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/productos/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.DELETE, "/api/productos/**").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.PATCH, "/api/productos/*/stock").hasAnyRole("ADMIN", "VENDEDOR")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(e -> e
