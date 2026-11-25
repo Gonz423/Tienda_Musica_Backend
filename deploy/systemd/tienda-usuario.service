@@ -1,0 +1,19 @@
+[Unit]
+Description=Tienda Musica - usuario-service (puerto interno 8082)
+After=network.target mariadb.service
+Wants=mariadb.service
+
+[Service]
+Type=simple
+User=tiendamusica
+Group=tiendamusica
+WorkingDirectory=/opt/tienda-musica
+# Variables y secretos fuera del código y de Git
+EnvironmentFile=/etc/tienda-musica/usuario-service.env
+ExecStart=/usr/bin/java -Xms64m -Xmx256m -XX:MaxMetaspaceSize=160m -XX:+UseSerialGC -Xss512k -jar /opt/tienda-musica/usuario-service.jar --spring.profiles.active=prod
+Restart=on-failure
+RestartSec=10
+SuccessExitStatus=143
+
+[Install]
+WantedBy=multi-user.target
