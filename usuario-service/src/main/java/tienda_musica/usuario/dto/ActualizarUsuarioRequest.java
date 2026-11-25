@@ -25,4 +25,12 @@ public class ActualizarUsuarioRequest {
     private String telefono;
     private String direccion;
     private Boolean activo;
+
+    // Opcional: si viene con texto se reemplaza la contraseña (se guarda con BCrypt)
+    private String password;
+
+    public ActualizarUsuarioRequest(String nombre, String correo, String rol, String rut,
+                                    String telefono, String direccion, Boolean activo) {
+        this(nombre, correo, rol, rut, telefono, direccion, activo, null);
+    }
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.util.Date;
 
 @Service
 public class JwtService {
@@ -52,5 +53,22 @@ public class JwtService {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    /**
+     * Token de corta duración (60 s) que pedido-service usa para llamar a los
+     * endpoints internos de producto-service (descontar / reponer stock).
+     * Rol SERVICIO: ningún usuario humano puede tener este rol.
+     */
+    public String generarTokenServicio() {
+        Date ahora = new Date();
+        return Jwts.builder()
+                .issuer(issuer)
+                .subject("pedido-service")
+                .claim("rol", "SERVICIO")
+                .issuedAt(ahora)
+                .expiration(new Date(ahora.getTime() + 60_000))
+                .signWith(clave())
+                .compact();
     }
 }

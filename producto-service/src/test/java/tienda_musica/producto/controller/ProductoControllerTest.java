@@ -71,8 +71,8 @@ class ProductoControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/productos/{id}/stock ajusta stock con rol VENDEDOR")
-    void ajustarStock_vendedor_retorna200() throws Exception {
+    @DisplayName("PATCH /api/v1/productos/{id}/stock incrementa stock (+5) con rol ADMIN")
+    void ajustarStock_incremento_retorna200() throws Exception {
         AjustarStockRequest request = new AjustarStockRequest(5);
         Producto productoActualizado = new Producto(
                 "TEST01", "Guitarras", "Guitarra Test", "Marca Test", "Modelo Test",
@@ -82,8 +82,8 @@ class ProductoControllerTest {
 
         when(productoService.ajustarStock(eq(1L), eq(5))).thenReturn(productoActualizado);
 
-        mockMvc.perform(patch("/api/productos/1/stock")
-                        .principal(authVendedor)
+        mockMvc.perform(patch("/api/v1/productos/1/stock")
+                        .principal(authAdmin)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -92,7 +92,7 @@ class ProductoControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/productos/{id}/stock ajusta stock con rol ADMIN")
+    @DisplayName("PATCH /api/v1/productos/{id}/stock decrementa stock (-3) con rol ADMIN")
     void ajustarStock_admin_retorna200() throws Exception {
         AjustarStockRequest request = new AjustarStockRequest(-3);
         Producto productoActualizado = new Producto(
@@ -103,7 +103,7 @@ class ProductoControllerTest {
 
         when(productoService.ajustarStock(eq(1L), eq(-3))).thenReturn(productoActualizado);
 
-        mockMvc.perform(patch("/api/productos/1/stock")
+        mockMvc.perform(patch("/api/v1/productos/1/stock")
                         .principal(authAdmin)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -113,15 +113,15 @@ class ProductoControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/productos/{id}/stock con stock negativo lanza 400 Bad Request")
+    @DisplayName("PATCH /api/v1/productos/{id}/stock con stock negativo lanza 400 Bad Request")
     void ajustarStock_stockNegativo_retorna400() throws Exception {
         AjustarStockRequest request = new AjustarStockRequest(-20);
 
         when(productoService.ajustarStock(eq(1L), eq(-20)))
                 .thenThrow(new IllegalArgumentException("No se permite stock negativo. Stock actual: 10, ajuste solicitado: -20"));
 
-        mockMvc.perform(patch("/api/productos/1/stock")
-                        .principal(authVendedor)
+        mockMvc.perform(patch("/api/v1/productos/1/stock")
+                        .principal(authAdmin)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isBadRequest())
@@ -129,7 +129,7 @@ class ProductoControllerTest {
     }
 
     @Test
-    @DisplayName("GET /api/productos/stock-critico retorna 200 y productos con stock <= 3")
+    @DisplayName("GET /api/v1/productos/stock-critico retorna 200 y productos con stock <= 3")
     void listarStockCritico_retorna200() throws Exception {
         Producto critico = new Producto(
                 "CRIT01", "Baterías", "Batería Test", "Marca B", "Modelo B",
@@ -139,7 +139,7 @@ class ProductoControllerTest {
 
         when(productoService.listarStockCritico()).thenReturn(List.of(critico));
 
-        mockMvc.perform(get("/api/productos/stock-critico").principal(authVendedor))
+        mockMvc.perform(get("/api/v1/productos/stock-critico").principal(authVendedor))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].codigo").value("CRIT01"))
                 .andExpect(jsonPath("$[0].stock").value(2))

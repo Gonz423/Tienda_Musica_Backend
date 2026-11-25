@@ -31,6 +31,21 @@ public class GlobalExceptionHandler {
         return errorResponse(HttpStatus.BAD_REQUEST, msg);
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<Map<String,Object>> handleForbidden(RuntimeException ex) {
+        return errorResponse(HttpStatus.FORBIDDEN, ex.getMessage() != null ? ex.getMessage() : "Acceso denegado");
+    }
+
+    @ExceptionHandler(org.springframework.security.authorization.AuthorizationDeniedException.class)
+    public ResponseEntity<Map<String,Object>> handleAuthorizationDenied(RuntimeException ex) {
+        return errorResponse(HttpStatus.FORBIDDEN, "Acceso denegado: permisos insuficientes");
+    }
+
+    @ExceptionHandler(ServicioNoDisponibleException.class)
+    public ResponseEntity<Map<String,Object>> handleServicioCaido(ServicioNoDisponibleException ex) {
+        return errorResponse(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String,Object>> handleGeneral(Exception ex) {
         return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "Error interno: " + ex.getMessage());

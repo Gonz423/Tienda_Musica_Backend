@@ -12,13 +12,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import tienda_musica.producto.dto.AjustarStockRequest;
+import tienda_musica.producto.dto.MovimientoStockItem;
 import tienda_musica.producto.model.Producto;
 import tienda_musica.producto.service.ProductoService;
 
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/productos")
+@RequestMapping("/api/v1/productos")
 @Tag(name = "Productos", description = "Endpoints de catálogo, consulta y gestión de stock de instrumentos musicales")
 public class ProductoController {
 
@@ -76,15 +77,15 @@ public class ProductoController {
     }
 
     @PatchMapping("/{id:[0-9]+}/stock")
-    @PreAuthorize("hasAnyRole('ADMIN', 'VENDEDOR')")
+    @PreAuthorize("hasRole('ADMIN')")
     @SecurityRequirement(name = "bearerAuth")
-    @Operation(summary = "Ajustar stock (+/-)", description = "Permite incrementar o decrementar el stock disponible de un producto (+/- unidades). Accesible por ADMIN y VENDEDOR. No permite stock negativo.")
+    @Operation(summary = "Ajustar stock (+/-)", description = "Permite incrementar o decrementar el stock disponible de un producto (+/- unidades). Accesible solo por ADMIN (el VENDEDOR solo visualiza). No permite stock negativo.")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "Stock ajustado exitosamente"),
             @ApiResponse(responseCode = "400", description = "Ajuste inválido o stock resultante negativo"),
             @ApiResponse(responseCode = "404", description = "Producto no encontrado"),
             @ApiResponse(responseCode = "401", description = "No autenticado"),
-            @ApiResponse(responseCode = "403", description = "Permisos insuficientes: se requiere ADMIN o VENDEDOR")
+            @ApiResponse(responseCode = "403", description = "Permisos insuficientes: se requiere ADMIN")
     })
     public ResponseEntity<Producto> ajustarStock(
             @PathVariable Long id,
@@ -109,5 +110,24 @@ public class ProductoController {
     public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         productoService.eliminar(id);
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/stock/descontar")
+    @PreAuthorize("hasRole('SERVICIO')")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Descontar stock de un pedido (uso interno)",
+            description = "Llamado por pedido-service al confirmar un checkout. Requiere un token de servicio (rol SERVICIO). "
+                    + "Es atómico: si un producto no tiene stock suficiente responde 400 y no descuenta nada.")
+    public ResponseEntity<List<Producto>> descontarStock(@Valid @RequestBody List<MovimientoStockItem> items) {
+        return ResponseEntity.ok(productoService.descontarStock(items));
+    }
+
+    @PostMapping("/stock/reponer")
+    @PreAuthorize("hasRole('SERVICIO')")
+    @SecurityRequirement(name = "bearerAuth")
+    @Operation(summary = "Reponer stock de un pedido cancelado (uso interno)",
+            description = "Llamado por pedido-service cuando un pedido pasa a CANCELADO. Requiere rol SERVICIO.")
+    public ResponseEntity<List<Producto>> reponerStock(@Valid @RequestBody List<MovimientoStockItem> items) {
+        return ResponseEntity.ok(productoService.reponerStock(items));
     }
 }

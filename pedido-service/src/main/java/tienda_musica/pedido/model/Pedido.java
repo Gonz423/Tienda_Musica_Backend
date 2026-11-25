@@ -41,7 +41,8 @@ public class Pedido {
     @Column(name = "direccion_envio", nullable = false)
     private String direccionEnvio;
 
-    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
+    // EAGER: open-in-view=false, el JSON necesita los detalles fuera de la transaccion
+    @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @Builder.Default
     private List<DetallePedido> detalles = new ArrayList<>();
 

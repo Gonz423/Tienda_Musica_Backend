@@ -7,11 +7,12 @@ import lombok.Data;
 
 import java.util.List;
 
+/**
+ * El cliente dueño del pedido NO viene en el cuerpo: se toma del token JWT
+ * (claim "sub" = correo) para que nadie pueda crear pedidos a nombre de otro.
+ */
 @Data
 public class CrearPedidoRequest {
-
-    @NotBlank(message = "El clienteId (o correo) es obligatorio")
-    private String clienteId;
 
     @NotBlank(message = "La direccion de envio es obligatoria")
     private String direccionEnvio;

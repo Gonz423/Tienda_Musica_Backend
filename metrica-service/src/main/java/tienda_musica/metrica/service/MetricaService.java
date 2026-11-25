@@ -18,6 +18,7 @@ import java.util.List;
 public class MetricaService {
 
     private final RegistroVentaRepository repo;
+    private final EstadoOperacionCliente estadoOperacion;
 
     // ── Registrar venta (cuando pedido llega a ENTREGADO) ─────────────────
     @Transactional
@@ -35,6 +36,13 @@ public class MetricaService {
                 .fechaVenta(req.getFechaVenta() != null ? req.getFechaVenta() : LocalDate.now())
                 .build();
         return repo.save(r);
+    }
+
+    /** Completa los KPIs operativos consultando en vivo pedido-service y producto-service. */
+    public KpisResponse conEstadoOperacion(KpisResponse kpis, String authorization) {
+        kpis.setPedidosPendientes(estadoOperacion.contarPedidosPendientes(authorization));
+        kpis.setProductosStockCritico(estadoOperacion.contarStockCritico(authorization));
+        return kpis;
     }
 
     // ── KPIs globales (todos los registros) ───────────────────────────────
@@ -81,8 +89,8 @@ public class MetricaService {
         return KpisResponse.builder()
                 .totalIngresos(totalIngresos)
                 .cantidadTotalPedidos(cantidadPedidos)
-                .pedidosPendientes(0L) // se actualiza via registro desde pedido-service
-                .productosStockCritico(0L) // se actualiza via registro desde producto-service
+                .pedidosPendientes(0L) // se completa en conEstadoOperacion()
+                .productosStockCritico(0L) // se completa en conEstadoOperacion()
                 .productoMasVendido(productoMasVendido)
                 .ticketPromedio(ticketPromedio)
                 .build();
